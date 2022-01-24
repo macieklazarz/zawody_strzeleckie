@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load tailwind_filters %}
+
+{% block title %}
+  Edycja "{{ course.title }}"
+{% endblock %}
+
+{% block content %}
+<section class="text-gray-600 body-font overflow-hidden">
+  <div class="container px-5 py-4 mx-auto">
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <div class="table-responsive">
+            <p>Edytujesz opłaty zawodnika {{uzytkownik }}</p>
+
+            <form method="post">
+              {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+
+                    <table class="table-responsive  mx-auto w-auto align-middle md:text-center">
+                      <tr>
+                          <p class="text-center"><b>Turniej:</b> {{ form.instance.konkurencja.turniej|title }}</p>
+                          <td class="mu"><p><b>Konkurencja:</b> {{ form.instance.konkurencja|title }}</p></td>
+                          <td class="mu">{{ form }}</td>
+                      </tr>
+                    </table>
+                    <br>              
+                    <br>              
+                    <br>              
+              {% endfor %}
+                            <input type="submit" class="mt-1 w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md" value="Zapisz">
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+{% block content %}
+
+<div class="container">
+	{% if dodawanie_zawodnika == 1 %}
+	<div class="d-flex justify-content-center pt-5 pb-5">
+		<h1 class="text-4xl text-gray-800">Zapisy do konkurencji</h1>
+	</div>
+	<form method="post" class="mt-0">
+		{% csrf_token %}
+		{{ form|crispy }}
+		<button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md">Dodaj</button>
+	</form>
+	{% else %}
+	<div class="d-flex justify-content-center">
+		<h1 class="text-4xl text-gray-800">Rejestracja zamknięta</h1>
+	</div>
+	{% endif %}
+</div>
+{% endblock content %}
