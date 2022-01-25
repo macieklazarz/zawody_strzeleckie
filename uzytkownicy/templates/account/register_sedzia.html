@@ -41,7 +41,7 @@
 
 </style>
 <form class="form-signin" method="post">{% csrf_token %}
-    <h1 class="h3 mb-3 fw-normal">Register an account</h1>
+    <h1 class="h3 mb-3 fw-normal">Rejestracja sędziego</h1>
       <input type="email" name="email" id="inputEmail" class="form-control"  placeholder="Email (pole obowiazkowe)" required autofocus>
       <input type="text" name="username" id="inputUsername" class="form-control"  placeholder="Username (pole obowiazkowe)" required>
       <input type="text" name="imie" id="inputImie" class="form-control"  placeholder="Imię (pole obowiązkowe)" required>
@@ -67,6 +67,6 @@
   <script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="g-recaptcha" data-sitekey="6LdlCvIdAAAAADUy--NINmX-DYBtkD5T6aOzNP4I"></div>
 
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Zarejestruj</button>
  </form>
 {% endblock content%}
