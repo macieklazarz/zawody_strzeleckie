@@ -260,6 +260,8 @@ class SedziaCreateView(LoginRequiredMixin, CreateView):
 
 
 
+
+
 class SedziaDeleteView(LoginRequiredMixin, DeleteView):
 	login_url = 'start'
 	template_name = "zawody/sedzia_delete.html"

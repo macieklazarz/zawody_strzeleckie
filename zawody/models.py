@@ -18,7 +18,7 @@ class Konkurencja(models.Model):
 
 	def __str__(self):
 		return self.nazwa
-# Create your models here.
+
 	class Meta:
 		verbose_name_plural = "Konkurencja"
 

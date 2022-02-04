@@ -33,6 +33,8 @@ class RejestracjaDoKonkurencjiView(LoginRequiredMixin, CreateView):
 		context['dodawanie_zawodnika'] = opcja
 		context['pk'] = self.kwargs['pk']
 		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		lista_zarejestrowanych = Wyniki.objects.filter(zawodnik__id = self.request.user.id).filter(konkurencja__turniej__id = self.kwargs['pk']).values_list("konkurencja__nazwa", flat=True)
+		context['lista_zarejestrowanych'] = lista_zarejestrowanych
 		return context
 
 	def get_success_url(self):
@@ -137,7 +139,7 @@ def wyniki(request, pk):
 		zawody_nazwa.append(i)
 
 	wyniki = []
-	sedziowie_queryset = []																						#robimy liste ktorej elementami beda wyniki poszczegolnych zawodow
+	sedziowie_queryset = []	
 	sedziowie = []
 	for i in zawody_lista:
 		wyniki.append(Wyniki.objects.filter(konkurencja = i, oplata=1).order_by('kara', '-wynik', '-X', '-Xx', '-dziewiec', '-osiem', '-siedem', '-szesc', '-piec', '-cztery', '-trzy', '-dwa', '-jeden'))
@@ -226,6 +228,7 @@ class WynikUpdateView(LoginRequiredMixin, UpdateView):
 		return super(WynikUpdateView,self).form_valid(form)
 
 	def dispatch(self, request, *args, **kwargs):
+		#sprawdzam czy użytkownk który próbuje edytować wynik jest sędzią uprawnionym do edycji wyników danej konkurencji. Jeśli nie to przekierowuję do not_authorized.
 		wynik_pk = self.kwargs.get('pk')
 		zawody_pk = Wyniki.objects.filter(id = wynik_pk).values_list('konkurencja__id', flat=True)
 		zawody_pk_lista = []

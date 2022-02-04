@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from.views import logout_view, login_view, registration_form, registration_form_sedzia, UzytkownicyListView, UzytkownicyUpdateView, UzytkownicyDeleteView, PasswordResetViewNew, PasswordResetDoneViewNew, PasswordResetConfirmViewNew, PasswordResetCompleteViewNew
+from.views import logout_view, login_view, registration_form, registration_form_sedzia, registration_form_no_login, UzytkownicyListView, UzytkownicyUpdateView, UzytkownicyDeleteView, PasswordResetViewNew, PasswordResetDoneViewNew, PasswordResetConfirmViewNew, PasswordResetCompleteViewNew
 app_name = 'uzytkownicy'
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
 	path('uzytkownicy_lista/<int:pk>', UzytkownicyListView.as_view(), name="uzytkownicy_lista"),
 	path('edytuj_uzytkownika/<int:pk>/<int:pk_turniej>/', UzytkownicyUpdateView.as_view(), name="edytuj_uzytkownika"),
 	path('usun_uzytkownika/<int:pk>/<int:pk_turniej>',UzytkownicyDeleteView.as_view(), name="usun_uzytkownika"),
+    path('register_no_login/<int:pk>', registration_form_no_login, name="register_no_login"),
 
 
     path('<int:pk>/password_reset/',

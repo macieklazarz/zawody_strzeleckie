@@ -122,15 +122,15 @@ USE_L10N = True
 USE_TZ = True
 
 
-DEFAULT_FROM_EMAIL = 'zawodyreset@mail.com'
-SERVER_EMAIL = 'tuzownia@gmail.com'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'tuzownia@gmail.com'
-EMAIL_HOST_PASSWORD = 'qapl12!@'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# DEFAULT_FROM_EMAIL = 'zawodyreset@mail.com'
+# SERVER_EMAIL = 'tuzownia@gmail.com'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'tuzownia@gmail.com'
+# EMAIL_HOST_PASSWORD = '****'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

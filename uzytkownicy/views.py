@@ -77,6 +77,30 @@ def registration_form(request, pk):
 	return render(request, 'account/register.html', context)
 
 
+
+def registration_form_no_login(request,pk):
+	if request.user.is_rts:
+		context={}
+		context['pk'] = pk
+		context['nazwa_turnieju'] = nazwa_turnieju(pk)
+		if request.POST:
+			form=RegistrationForm(request.POST)
+			if form.is_valid():
+				form.save()
+				email = form.cleaned_data.get('email')
+				raw_password = form.cleaned_data.get('password1')
+				account = authenticate(email=email, password=raw_password)
+				return redirect('uzytkownicy:uzytkownicy_lista', pk)
+			else:
+				context['registration_form'] = form
+		else:
+			form = RegistrationForm()
+			context['registration_form'] = form
+		return render(request, 'account/register.html', context)
+	else:
+		return redirect('not_authorized')
+
+
 def registration_form_sedzia(request, pk):
 	context={}
 	context['pk'] = pk
