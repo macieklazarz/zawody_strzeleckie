@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, UpdateView, DeleteView
 from django.contrib.auth import views as auth_views
 from zawody.views import nazwa_turnieju
-from .forms import AccountAuthenticationForm, RegistrationForm, RegistrationFormSedzia, UzytkownikModelForm
+from .forms import AccountAuthenticationForm, RegistrationForm, RegistrationFormSedzia, UzytkownikModelForm, SedziaModelForm
 from .models import Uzytkownik
 # biblioteki do funkcji registration_form
 from zawody_strzeleckie import settings
@@ -184,6 +184,35 @@ class UzytkownicyUpdateView(LoginRequiredMixin, UpdateView):
 		except:
 			return redirect('not_authorized')
 			# pass
+
+class SedziaUpdateView(LoginRequiredMixin, UpdateView):
+	login_url = 'start'
+	template_name = "account/account_update.html"
+	form_class = SedziaModelForm
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
+		return context
+
+	def get_queryset(self):
+		return Uzytkownik.objects.all()
+
+	def get_success_url(self):
+		return reverse("zawody:sedzia_lista", kwargs={'slug': self.kwargs['slug_turniej']})
+		
+	def form_valid(self, form):
+		return super(SedziaUpdateView,self).form_valid(form)
+
+	def dispatch(self, request, *args, **kwargs):
+		try:
+			if request.user.is_rts:
+				return super(SedziaUpdateView, self).dispatch(request, *args, **kwargs)
+			else:
+				return redirect('not_authorized')
+		except:
+		   # pass
+			return redirect('not_authorized')
 
 
 class UzytkownicyDeleteView(LoginRequiredMixin, DeleteView):

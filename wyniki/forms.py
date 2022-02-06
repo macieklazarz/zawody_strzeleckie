@@ -73,7 +73,13 @@ class WynikiModelForm(forms.ModelForm):
     jeden = forms.CharField(widget=forms.Select(choices=CHOICE))
     class Meta:
         model = Wyniki
-        fields = ['X', 'Xx', 'dziewiec', 'osiem', 'siedem', 'szesc', 'piec', 'cztery', 'trzy', 'dwa', 'jeden','kara']
+        fields = ['X', 'Xx', 'dziewiec', 'osiem', 'siedem', 'szesc', 'piec', 'cztery', 'trzy', 'dwa', 'jeden','kara', 'kara_punktowa']
+
+    def clean(self):
+        cleaned_data = super().clean
+        if self.cleaned_data['kara_punktowa'] == None:
+            # raise ValidationError("Podaj wartość kary punktowej")
+            self.cleaned_data['kara_punktowa'] = 0
 
 ModuleFormSet = inlineformset_factory(Uzytkownik,
                                       Wyniki,

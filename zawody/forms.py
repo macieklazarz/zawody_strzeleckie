@@ -24,6 +24,7 @@ class TurniejModelForm(forms.ModelForm):
         fields = (
             'nazwa',
             'rejestracja',
+            'klasyfikacja_generalna',
             )
 
 #formularz przypisywania sędziego do konkurencji

@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.base import TemplateResponseMixin, View
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import datetime
@@ -151,6 +151,8 @@ def wyniki(request, slug):
 	context['wyniki'] = wyniki
 	context['zawody_nazwa'] = zawody_nazwa
 	context['klasyfikacja_generalna'] = klasyfikacja_generalna
+	klasyfikacja_generalna_display = Turniej.objects.filter(slug=slug).values_list('klasyfikacja_generalna', flat=True)
+	context['klasyfikacja_generalna_display'] = klasyfikacja_generalna_display[0]
 	context['slug'] = slug
 
 	return render(request, 'wyniki/wyniki.html', context)
@@ -246,7 +248,32 @@ class WynikUpdateView(LoginRequiredMixin, UpdateView):
 			return redirect('not_authorized')
 
 
+class WynikiDeleteView(LoginRequiredMixin, DeleteView):
+	login_url = 'start'
+	template_name = "wyniki/konkurencja_delete.html"
+	context_object_name = 'zawodnik'
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
+		return context
+
+	def get_queryset(self):
+		return Wyniki.objects.all()
+
+	def get_success_url(self):
+		return reverse("wyniki:wyniki_edycja", kwargs={'slug': self.kwargs['slug_turniej']})
+
+	def dispatch(self, request, *args, **kwargs):
+		try:
+			if request.user.is_admin:
+				return super(WynikiDeleteView, self).dispatch(request, *args, **kwargs)
+			else:
+				return redirect('not_authorized')
+		except:
+			return redirect('not_authorized')
+			# pass
 
 
 

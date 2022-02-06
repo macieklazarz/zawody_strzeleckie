@@ -7,6 +7,7 @@ class Turniej(models.Model):
 	nazwa = models.CharField(max_length=30, unique=True)
 	rejestracja = models.BooleanField(verbose_name='Rejestracja')
 	slug = models.SlugField(unique=True)
+	klasyfikacja_generalna = models.BooleanField(default=True, verbose_name='Klasyfikacja generalna')
 
 
 	def save(self, *args, **kwargs):
@@ -25,7 +26,7 @@ class Konkurencja(models.Model):
 	slug = models.SlugField(unique=True)
 
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.nazwa)
+		self.slug = slugify(str(self.turniej)+"_"+str(self.nazwa))
 		super(Konkurencja, self).save(*args, **kwargs)
 
 	def __str__(self):
@@ -33,6 +34,7 @@ class Konkurencja(models.Model):
 
 	class Meta:
 		verbose_name_plural = "Konkurencja"
+		unique_together =('nazwa','turniej',)
 
 #nazwakonkurencji i turniej powinny być unikalne
 

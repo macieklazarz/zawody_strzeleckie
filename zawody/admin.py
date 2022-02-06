@@ -4,7 +4,7 @@ from django.contrib import admin
 # Register your models here.
 @admin.register(Turniej)
 class TurniejAdmin(admin.ModelAdmin):
-	list_display = ('nazwa', 'slug',)
+	list_display = ('nazwa', 'klasyfikacja_generalna', 'slug',)
 	search_fields = ('nazwa',)
 
 @admin.register(Sedzia)

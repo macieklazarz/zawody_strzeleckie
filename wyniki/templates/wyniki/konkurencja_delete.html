@@ -2,7 +2,7 @@
 {% block content %}
 {% load tailwind_filters %}
 <div class="max-w-lg mx-auto">
-	<h1 class="text-3xl text-gray-800 mt-3 ml-b">Czy usunąć zawodnika {{zawodnik.zawodnik}} z konkurencji {{zawodnik.zawody}}?</h1>
+	<h1 class="text-3xl text-gray-800 mt-3 ml-b">Czy usunąć zawodnika {{zawodnik.zawodnik}} z konkurencji {{zawodnik.konkurencja}}?</h1>
 	<form method="post" class="mt-0">
 		{% csrf_token %}
 		{{form|crispy}}

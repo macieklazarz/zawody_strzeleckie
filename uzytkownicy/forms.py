@@ -66,3 +66,26 @@ class UzytkownikModelForm(forms.ModelForm):
 		nazwisko = cleaned_data.get('nazwisko') 
 		nazwisko = nazwisko.upper() 
 		self.cleaned_data['nazwisko'] = nazwisko
+
+class SedziaModelForm(forms.ModelForm):
+	imie	 = forms.CharField(widget=forms.TextInput())
+	nazwisko = forms.CharField(widget=forms.TextInput())
+	licencja_sedziego = forms.CharField(required=False,widget=forms.TextInput())
+	klasa_sedziego	 = forms.CharField(required=False,widget=forms.TextInput())
+	licencja	 = forms.CharField(required=False,widget=forms.TextInput())
+	class Meta:
+		model = Uzytkownik
+		fields = (
+			'email',
+			'username',
+			'imie',
+			'nazwisko',
+			'licencja_sedziego',
+			'klasa_sedziego',
+			'licencja'
+			)
+	def clean(self):
+		cleaned_data = super().clean()
+		nazwisko = cleaned_data.get('nazwisko') 
+		nazwisko = nazwisko.upper() 
+		self.cleaned_data['nazwisko'] = nazwisko

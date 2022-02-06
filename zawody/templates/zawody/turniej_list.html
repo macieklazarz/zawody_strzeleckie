@@ -11,17 +11,25 @@
         <thead class="table-secondary">
           <tr>
         <td class="m"><b>Nazwa</b></td>
+        <td class="m"><b>Id</b></td>
         <td class="m"><b>Rejestracja</b></td>
+        <td class="m"><b>Klasyfikacja generalna</b></td>
         <td class="m"><b>Edytuj</b></td>
         <td class="m"><b>Usuwanie</b></td>
       </tr>
     </thead>
           {% for turniej in object_list %}
           <tr>
-            <td class="m">{{ turniej.nazwa }}</td>
+              <td class="m">{{ turniej.nazwa }}</td>
+              <td class="m">{{ turniej.id }}</td>
             <td class="m">
               <label class="inline-flex items-center">
                 <input type="checkbox" {% if turniej.rejestracja == 1 %} checked="checked" {% endif %} onclick="return false">
+              </label>
+            </td>
+            <td class="m">
+              <label class="inline-flex items-center">
+                <input type="checkbox" {% if turniej.klasyfikacja_generalna == 1 %} checked="checked" {% endif %} onclick="return false">
               </label>
             </td>
             <td class="m">

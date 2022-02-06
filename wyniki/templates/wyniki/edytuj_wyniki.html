@@ -32,10 +32,12 @@
     								<td class="m"><b>3</b></td>
     								<td class="m"><b>2</b></td>
     								<td class="m"><b>1</b></td>
+                                    <td class="m"><b>Kara</b></td>
     								<!-- <td class="m"><b>Suma</b></td> -->
                                     <td class="m"><b>Wynik</b></td>
                                     <!-- <td class="m"><b>Kara</b></td> -->
     								<td class="m"><b>Edycja</b></td>
+                                    <td class="m"><b>Usuń z konkurencji</b></td>
     							</tr>
     						</thead>
     						{% for osoba in wynikiencja %}
@@ -52,8 +54,10 @@
     							<td class="m" data-id="{{ osoba.id }}" data-type="trzy">{{osoba.trzy}}</td>
     							<td class="m" data-id="{{ osoba.id }}" data-type="dwa">{{osoba.dwa}}</td>
     							<td class="m" data-id="{{ osoba.id }}" data-type="jeden">{{osoba.jeden}}</td>
+                                <td class="m" data-id="{{ osoba.id }}" data-type="jeden">{{osoba.kara_punktowa}}</td>
                                 <td class="m" data-id="{{ osoba.id }}" data-type="wynik">{{osoba.rezultat}}</td>
     							<td class="m p-0 m-0"><a href="{% url 'wyniki:edycja_wyniku' osoba.slug slug%}"class="btn btn-secondary btn-sm active" role="button" aria-pressed="true"><p class="m m-0 p-0">Edytuj</p></a></td>
+                                <td class="m p-0 m-0"><a href="{% url 'wyniki:usuwanie_wyniku' osoba.slug slug%}"class="btn btn-secondary btn-sm active" role="button" aria-pressed="true"><p class="m m-0 p-0">Usuń</p></a></td>
     						</tr>
     						{% endfor %}
     					</table>
