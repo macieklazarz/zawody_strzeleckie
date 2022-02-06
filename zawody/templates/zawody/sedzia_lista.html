@@ -25,14 +25,14 @@
 	        	<td class="m">{{ sedzia_obiekt.osoba.licencja_sedziego }}</td>
 	        	<td class="m">{{ sedzia_obiekt.osoba.klasa_sedziego }}</td>
 				<td><a href="#" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true"><p class="m m-0 p-0">Edytuj sędziego</p></a></td>
-				<td><a href="{% url 'zawody:usun_sedziego' pk sedzia_obiekt.pk %}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true"><p class="m m-0 p-0">Usuń sędziego</p></a></td>
+				<td><a href="{% url 'zawody:usun_sedziego' sedzia_obiekt.slug slug%}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true"><p class="m m-0 p-0">Usuń sędziego</p></a></td>
 			</tr>	
         	{% endfor %}
       </table>
     </div>
 	<div class="d-flex justify-content-center" >
 		<div>
-			<a href="{% url 'zawody:dodaj_sedziego' pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"<p class="m m-0 p-0">Dodaj sędziego</a></a>
+			<a href="{% url 'zawody:dodaj_sedziego' slug %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"<p class="m m-0 p-0">Dodaj sędziego</a></a>
 		</div>
 	</div>
   </div>

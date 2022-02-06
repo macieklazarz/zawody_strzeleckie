@@ -14,13 +14,13 @@ import urllib.request
 from django.contrib import messages
 ##############################
 
-def logout_view(request, pk):
+def logout_view(request, slug):
 	logout(request)
-	return redirect('zawody:home', pk)
+	return redirect('zawody:home', slug)
 
-def login_view(request, pk):
+def login_view(request, slug):
 	context = {}
-	context['nazwa_turnieju'] = nazwa_turnieju(pk)
+	context['nazwa_turnieju'] = nazwa_turnieju(slug)
 	user = request.user
 	if user.is_authenticated:
 		return redirect("zawody:home")
@@ -33,20 +33,20 @@ def login_view(request, pk):
 
 			if user:
 				login(request, user)
-				return redirect("zawody:home", pk)
+				return redirect("zawody:home", slug)
 	else:
 		form = AccountAuthenticationForm()
 
 	context['login_form'] = form
-	context['pk'] = pk
+	context['slug'] = slug
 	return render(request, 'account/login.html', context)
 
 
 
-def registration_form(request, pk):
+def registration_form(request, slug):
 	context={}
-	context['pk'] = pk
-	context['nazwa_turnieju'] = nazwa_turnieju(pk)
+	context['slug'] = slug
+	context['nazwa_turnieju'] = nazwa_turnieju(slug)
 	if request.POST:
 		form=RegistrationForm(request.POST)
 		if form.is_valid():
@@ -65,7 +65,7 @@ def registration_form(request, pk):
 				raw_password = form.cleaned_data.get('password1')
 				account = authenticate(email=email, password=raw_password)
 				login(request, account)
-				return redirect('zawody:home', pk)
+				return redirect('zawody:home', slug)
 			else:
 				print(' nie ma success')
 				messages.error(request, 'Invalid reCAPTCHA. Please try again.')
@@ -78,11 +78,11 @@ def registration_form(request, pk):
 
 
 
-def registration_form_no_login(request,pk):
+def registration_form_no_login(request,slug):
 	if request.user.is_rts:
 		context={}
-		context['pk'] = pk
-		context['nazwa_turnieju'] = nazwa_turnieju(pk)
+		context['slug'] = slug
+		context['nazwa_turnieju'] = nazwa_turnieju(slug)
 		if request.POST:
 			form=RegistrationForm(request.POST)
 			if form.is_valid():
@@ -90,7 +90,7 @@ def registration_form_no_login(request,pk):
 				email = form.cleaned_data.get('email')
 				raw_password = form.cleaned_data.get('password1')
 				account = authenticate(email=email, password=raw_password)
-				return redirect('uzytkownicy:uzytkownicy_lista', pk)
+				return redirect('uzytkownicy:uzytkownicy_lista', slug)
 			else:
 				context['registration_form'] = form
 		else:
@@ -101,10 +101,10 @@ def registration_form_no_login(request,pk):
 		return redirect('not_authorized')
 
 
-def registration_form_sedzia(request, pk):
+def registration_form_sedzia(request, slug):
 	context={}
-	context['pk'] = pk
-	context['nazwa_turnieju'] = nazwa_turnieju(pk)
+	context['slug'] = slug
+	context['nazwa_turnieju'] = nazwa_turnieju(slug)
 	if request.POST:
 		form=RegistrationFormSedzia(request.POST)
 		if form.is_valid():
@@ -123,7 +123,7 @@ def registration_form_sedzia(request, pk):
 				raw_password = form.cleaned_data.get('password1')
 				account = authenticate(email=email, password=raw_password)
 				login(request, account)
-				return redirect('zawody:home', pk)
+				return redirect('zawody:home', slug)
 			else:
 				messages.error(request, 'Invalid reCAPTCHA. Please try again.')
 		else:
@@ -139,8 +139,8 @@ class UzytkownicyListView(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_queryset(self):
@@ -162,15 +162,15 @@ class UzytkownicyUpdateView(LoginRequiredMixin, UpdateView):
 	form_class = UzytkownikModelForm
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Uzytkownik.objects.all()
 
 	def get_success_url(self):
-		return reverse("uzytkownicy:uzytkownicy_lista", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("uzytkownicy:uzytkownicy_lista", kwargs={'slug': self.kwargs['slug_turniej']})
 		
 	def form_valid(self, form):
 		return super(UzytkownicyUpdateView,self).form_valid(form)
@@ -183,6 +183,7 @@ class UzytkownicyUpdateView(LoginRequiredMixin, UpdateView):
 				return redirect('not_authorized')
 		except:
 			return redirect('not_authorized')
+			# pass
 
 
 class UzytkownicyDeleteView(LoginRequiredMixin, DeleteView):
@@ -192,15 +193,15 @@ class UzytkownicyDeleteView(LoginRequiredMixin, DeleteView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Uzytkownik.objects.all()
 
 	def get_success_url(self):
-		return reverse("uzytkownicy:uzytkownicy_lista", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("uzytkownicy:uzytkownicy_lista", kwargs={'slug': self.kwargs['slug_turniej']})
 
 	def dispatch(self, request, *args, **kwargs):
 		try:
@@ -214,18 +215,18 @@ class UzytkownicyDeleteView(LoginRequiredMixin, DeleteView):
 class PasswordResetViewNew(auth_views.PasswordResetView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 	def get_success_url(self):
-		return reverse("uzytkownicy:password_reset_done", kwargs={'pk': self.kwargs['pk']})
+		return reverse("uzytkownicy:password_reset_done", kwargs={'slug': self.kwargs['slug']})
 
 
 class PasswordResetDoneViewNew(auth_views.PasswordResetDoneView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 class PasswordResetConfirmViewNew(auth_views.PasswordResetConfirmView):

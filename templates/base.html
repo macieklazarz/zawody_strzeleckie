@@ -28,26 +28,26 @@
 		<ul class="navigation">
 			{% if request.user.is_authenticated %}
 				<li><a href="{% url 'start' %}" onclick="toggleMenu();">Strona główna</a></li>
-				<li><a href="{% url 'uzytkownicy:logout' pk=pk %}" onclick="toggleMenu();">Wylogowanie</a></li>
-				<li><a href="{% url 'wyniki:rejestracja_do_konkurencj' pk=pk %}" onclick="toggleMenu();">Zapisy do konkurencji</a></li>
-				<li><a href="{% url 'wyniki:wyniki' pk=pk%}" onclick="toggleMenu();">Wyniki</a></li>
+				<li><a href="{% url 'uzytkownicy:logout' slug=slug %}" onclick="toggleMenu();">Wylogowanie</a></li>
+				<li><a href="{% url 'wyniki:rejestracja_do_konkurencj' slug=slug %}" onclick="toggleMenu();">Zapisy do konkurencji</a></li>
+				<li><a href="{% url 'wyniki:wyniki' slug=slug%}" onclick="toggleMenu();">Wyniki</a></li>
 				{% if user.is_superuser or user.is_rts %}
-					<li><a href="{% url 'uzytkownicy:uzytkownicy_lista' pk=pk%}" onclick="toggleMenu();">Zarządzaj użytkownikami</a></li>
-					<li><a href="{% url 'wyniki:lista_oplat' pk=pk%}" onclick="toggleMenu();">Opłaty</a></li>
+					<li><a href="{% url 'uzytkownicy:uzytkownicy_lista' slug=slug%}" onclick="toggleMenu();">Zarządzaj użytkownikami</a></li>
+					<li><a href="{% url 'wyniki:lista_oplat' slug=slug%}" onclick="toggleMenu();">Opłaty</a></li>
 				{% endif %}
 				{% if user.is_superuser %}
-					<li><a href="{% url 'zawody:lista_konkurencji' pk=pk%}" onclick="toggleMenu();">Edycja konkurencji</a></li>
-					<li><a href="{% url 'zawody:lista_turniejow' pk=pk%}" onclick="toggleMenu();">Turnieje</a></li>
-					<li><a href="{% url 'zawody:sedzia_lista' pk=pk%}" onclick="toggleMenu();">Zarządzaj sędziami</a></li>
+					<li><a href="{% url 'zawody:lista_konkurencji' slug=slug%}" onclick="toggleMenu();">Edycja konkurencji</a></li>
+					<li><a href="{% url 'zawody:lista_turniejow' slug=slug%}" onclick="toggleMenu();">Turnieje</a></li>
+					<li><a href="{% url 'zawody:sedzia_lista' slug=slug%}" onclick="toggleMenu();">Zarządzaj sędziami</a></li>
 				{% endif %}
 				{% if request.user.is_sedzia %}
-					<li><a href="{% url 'wyniki:wyniki_edycja' pk=pk %}" onclick="toggleMenu();">Edytuj Wyniki</a></li>
+					<li><a href="{% url 'wyniki:wyniki_edycja' slug %}" onclick="toggleMenu();">Edytuj Wyniki</a></li>
 				{% endif%}
 			{% else %}
 				<li><a href="{% url 'start' %}" onclick="toggleMenu();">Strona główna</a></li>
-				<li><a href="{% url 'uzytkownicy:register' pk=pk%}" onclick="toggleMenu();">Zarejestruj się</a></li>
-				<li><a href="{% url 'uzytkownicy:register_sedzia' pk=pk%}" onclick="toggleMenu();">Rejestracja sędziego</a></li>
-				<li><a href="{% url 'uzytkownicy:login' pk=pk%}" onclick="toggleMenu();">Logowanie</a></li>
+				<li><a href="{% url 'uzytkownicy:register' slug=slug%}" onclick="toggleMenu();">Zarejestruj się</a></li>
+				<li><a href="{% url 'uzytkownicy:register_sedzia' slug=slug%}" onclick="toggleMenu();">Rejestracja sędziego</a></li>
+				<li><a href="{% url 'uzytkownicy:login' slug=slug%}" onclick="toggleMenu();">Logowanie</a></li>
 			{% endif %}
 
 

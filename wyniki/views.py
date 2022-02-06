@@ -27,24 +27,24 @@ class RejestracjaDoKonkurencjiView(LoginRequiredMixin, CreateView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		dodawanie_zawodnika = Turniej.objects.filter(id=self.kwargs['pk']).values_list("rejestracja")
+		dodawanie_zawodnika = Turniej.objects.filter(slug=self.kwargs['slug']).values_list("rejestracja")
 		for i in dodawanie_zawodnika:
 			opcja = i[0]
 		context['dodawanie_zawodnika'] = opcja
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
-		lista_zarejestrowanych = Wyniki.objects.filter(zawodnik__id = self.request.user.id).filter(konkurencja__turniej__id = self.kwargs['pk']).values_list("konkurencja__nazwa", flat=True)
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
+		lista_zarejestrowanych = Wyniki.objects.filter(zawodnik__id = self.request.user.id).filter(konkurencja__turniej__slug = self.kwargs['slug']).values_list("konkurencja__nazwa", flat=True)
 		context['lista_zarejestrowanych'] = lista_zarejestrowanych
 		return context
 
 	def get_success_url(self):
-		return reverse("wyniki:rejestracja_do_konkurencj", kwargs={'pk': self.kwargs['pk']})
+		return reverse("wyniki:rejestracja_do_konkurencj", kwargs={'slug': self.kwargs['slug']})
 		return super(RejestracjaDoKonkurencjiView, self).form_valid(form)
 
 	def get_form_kwargs(self):
 		kwargs = super(RejestracjaDoKonkurencjiView, self).get_form_kwargs()
 		kwargs.update({'user': self.request.user.is_rts})
-		kwargs.update({'pk': self.kwargs['pk']})
+		kwargs.update({'slug': self.kwargs['slug']})
 		return kwargs
 
 	def get_initial(self, *args, **kwargs):
@@ -60,8 +60,8 @@ class OplataListView(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_queryset(self):
@@ -85,55 +85,55 @@ class OplataUpdateView(LoginRequiredMixin, TemplateResponseMixin, View):
     uzytkownik = None
 
     def get_formset(self, data=None, turniej=1):
-        return ModuleFormSet(instance=self.uzytkownik,queryset=Wyniki.objects.filter(konkurencja__turniej__id=turniej),
+        return ModuleFormSet(instance=self.uzytkownik,queryset=Wyniki.objects.filter(konkurencja__turniej__slug=turniej),
                              data=data)
 
-    def dispatch(self, request, pk, pk_turniej):
+    def dispatch(self, request, slug, slug_turniej):
     	try:
 
     		if request.user.is_rts:
     			self.uzytkownik = get_object_or_404(Uzytkownik,
-		                                        id=pk)
-    			return super().dispatch(request, pk)
+		                                        slug=slug)
+    			return super().dispatch(request, slug)
     		else:
     			return reverse('not_authorized')
     	except:
-    		# return redirect(reverse('not_authorized'))
-    		pass
+    		return redirect(reverse('not_authorized'))
+    		# pass
 
 
     def get(self, request, *args, **kwargs):
         try:
-        	formset = self.get_formset(turniej=self.kwargs['pk_turniej'])
+        	formset = self.get_formset(turniej=self.kwargs['slug_turniej'])
         except:
-        	print('dupa')
+        	print('error')
         return self.render_to_response({'uzytkownik': self.uzytkownik,
                                         'formset': formset,
-                                        'pk': self.kwargs['pk_turniej'],
-                                        'nazwa_turnieju': nazwa_turnieju(self.kwargs['pk_turniej'])})
+                                        'slug': self.kwargs['slug_turniej'],
+                                        'nazwa_turnieju': nazwa_turnieju(self.kwargs['slug_turniej'])})
 
     def post(self, request, *args, **kwargs):
-        formset = self.get_formset(data=request.POST, turniej=self.kwargs['pk_turniej'])
+        formset = self.get_formset(data=request.POST, turniej=self.kwargs['slug_turniej'])
         if formset.is_valid():
             formset.save()
-            return redirect(reverse("wyniki:lista_oplat", kwargs={'pk': self.kwargs['pk_turniej']}))
+            return redirect(reverse("wyniki:lista_oplat", kwargs={'slug': self.kwargs['slug_turniej']}))
         return self.render_to_response({'uzytkownik': self.uzytkownik,
                                         'formset': formset,
-                                        'pk': self.kwargs['pk_turniej'],
-                                        'nazwa_turnieju': nazwa_turnieju(self.kwargs['pk_turniej'])})
+                                        'slug': self.kwargs['slug_turniej'],
+                                        'nazwa_turnieju': nazwa_turnieju(self.kwargs['slug_turniej'])})
 
 
 @login_required(login_url="/start/")
-def wyniki(request, pk):
+def wyniki(request, slug):
 	context = {}
-	context['nazwa_turnieju'] = nazwa_turnieju(pk)
+	context['nazwa_turnieju'] = nazwa_turnieju(slug)
 	#robię listę 'zawody_lista' zawodów turnieju
-	zawody = Konkurencja.objects.filter(turniej__id=pk).values_list('id', flat=True).order_by('id')
+	zawody = Konkurencja.objects.filter(turniej__slug=slug).values_list('id', flat=True).order_by('id')
 	zawody_lista = []
 	for i in zawody:
 		zawody_lista.append(i)
 	#robię listę z nazwami zawodów 'zawody_nazwa' za pomocą listy 'zawody_lista' 
-	zawody_nazwa_queryset = Konkurencja.objects.filter(turniej__id=pk).values_list('nazwa', flat=True).order_by('id')
+	zawody_nazwa_queryset = Konkurencja.objects.filter(turniej__slug=slug).values_list('nazwa', flat=True).order_by('id')
 	zawody_nazwa = []
 	for i in zawody_nazwa_queryset:
 		zawody_nazwa.append(i)
@@ -147,23 +147,23 @@ def wyniki(request, pk):
 	for i in sedziowie_queryset:
 		sedziowie.append(i)
 	context['sedziowie'] = sedziowie
-	klasyfikacja_generalna = Wyniki.objects.raw('select wyniki_wyniki.id, zawodnik_id, sum(X) as X, sum(Xx) as Xx,sum(dziewiec) as dziewiec, sum(osiem) as osiem,sum(siedem) as siedem ,sum(szesc) as szesc, sum(piec) as piec, sum(cztery) as cztery, sum(trzy) as trzy, sum(dwa) as dwa, sum(jeden) as jeden, sum(wynik) as wynik from wyniki_wyniki inner join zawody_konkurencja on wyniki_wyniki.konkurencja_id = zawody_konkurencja.id where zawody_konkurencja.turniej_id = %s and oplata=1 and wyniki_wyniki.kara = %s group by zawodnik_id order by wynik desc, X desc, Xx desc, dziewiec desc, osiem desc, siedem DESC, szesc desc, piec desc, cztery desc, trzy desc, dwa desc, jeden desc', [pk, 'BRAK'])
+	klasyfikacja_generalna = Wyniki.objects.raw('select wyniki_wyniki.id, zawodnik_id, sum(X) as X, sum(Xx) as Xx,sum(dziewiec) as dziewiec, sum(osiem) as osiem,sum(siedem) as siedem ,sum(szesc) as szesc, sum(piec) as piec, sum(cztery) as cztery, sum(trzy) as trzy, sum(dwa) as dwa, sum(jeden) as jeden, sum(wynik) as wynik from wyniki_wyniki inner join zawody_konkurencja on wyniki_wyniki.konkurencja_id = zawody_konkurencja.id inner join zawody_turniej on zawody_turniej.id = zawody_konkurencja.turniej_id where zawody_turniej.slug = %s and oplata=1 and wyniki_wyniki.kara = %s group by zawodnik_id order by wynik desc, X desc, Xx desc, dziewiec desc, osiem desc, siedem DESC, szesc desc, piec desc, cztery desc, trzy desc, dwa desc, jeden desc', [slug, 'BRAK'])
 	context['wyniki'] = wyniki
 	context['zawody_nazwa'] = zawody_nazwa
 	context['klasyfikacja_generalna'] = klasyfikacja_generalna
-	context['pk'] = pk
+	context['slug'] = slug
 
 	return render(request, 'wyniki/wyniki.html', context)
 
 
 @csrf_exempt
 @login_required(login_url="/start/")
-def wyniki_edycja(request, pk):
+def wyniki_edycja(request, slug):
 	if request.user.is_sedzia:
 		context = {}
-		context['pk'] = pk
-		context['nazwa_turnieju'] = nazwa_turnieju(pk)
-		turniej = Turniej.objects.filter(id=pk).values_list('id', flat=True)
+		context['slug'] = slug
+		context['nazwa_turnieju'] = nazwa_turnieju(slug)
+		turniej = Turniej.objects.filter(slug=slug).values_list('id', flat=True)
 		turniej_id = turniej[0]
 
 		#sprawdzam konkurencje przypisane do turnieju
@@ -187,14 +187,14 @@ def wyniki_edycja(request, pk):
 			wynik = Wyniki.objects.filter(konkurencja = i).order_by('zawodnik__nazwisko')
 			#do listy wyniki mają trafiać tylko te wyniki, które dotyczą konkretnego turnieju
 			#gdyby nie było dodatkowego filtrowania pojawiały by się błędy w przypadku gdy jedna konkurencja występowałaby w wielu turniejach
-			wyniki.append(wynik.filter(konkurencja__turniej=pk, oplata=1))
+			wyniki.append(wynik.filter(konkurencja__turniej__slug=slug, oplata=1))
 
 		#zapisujemy w liście zawody_nazwa nazwy zawodów, z którymi powiązany jest sędzia
 		zawody_nazwa = []
 		nazwy_zawodow = Konkurencja.objects.filter(id__in=powiazane_zawody_lista).values_list('nazwa', flat=True)
 		#do listy zawody_nazwa mają trafiać tylko te wyniki, które dotyczą konkretnego turnieju
 		#gdyby nie było dodatkowego filtrowania pojawiały by się błędy w przypadku gdy jedna konkurencja występowałaby w wielu turniejach
-		nazwy_zawodow = nazwy_zawodow.filter(turniej=pk)
+		nazwy_zawodow = nazwy_zawodow.filter(turniej__slug=slug)
 		for i in nazwy_zawodow:
 			zawody_nazwa.append(i)
 		context['wyniki'] = wyniki
@@ -214,23 +214,23 @@ class WynikUpdateView(LoginRequiredMixin, UpdateView):
 	context_object_name = 'cont'
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Wyniki.objects.all()
 
 	def get_success_url(self):
-		return reverse("wyniki:wyniki_edycja", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("wyniki:wyniki_edycja", kwargs={'slug': self.kwargs['slug_turniej']})
 
 	def form_valid(self, form):
 		return super(WynikUpdateView,self).form_valid(form)
 
 	def dispatch(self, request, *args, **kwargs):
 		#sprawdzam czy użytkownk który próbuje edytować wynik jest sędzią uprawnionym do edycji wyników danej konkurencji. Jeśli nie to przekierowuję do not_authorized.
-		wynik_pk = self.kwargs.get('pk')
-		zawody_pk = Wyniki.objects.filter(id = wynik_pk).values_list('konkurencja__id', flat=True)
+		slug = self.kwargs.get('slug')
+		zawody_pk = Wyniki.objects.filter(slug = slug).values_list('konkurencja__id', flat=True)
 		zawody_pk_lista = []
 		for i in zawody_pk:
 			zawody_pk_lista.append(i)
@@ -263,13 +263,13 @@ class WynikUpdateView(LoginRequiredMixin, UpdateView):
 
 
 @login_required(login_url="/start/")
-def exportexcel(request, pk):
+def exportexcel(request, slug):
 	if request.user.username == 'admin':
 		response=HttpResponse(content_type='application/ms-excel')
 		response['Content-Disposition'] = 'attachment; filename=Wyniki_' + str(datetime.datetime.now())+'.xls'
 		wb = xlwt.Workbook(encoding='utf-8')
 
-		zawody = Konkurencja.objects.filter(turniej__id=pk).values_list('nazwa', flat=True).order_by('id')
+		zawody = Konkurencja.objects.filter(turniej__slug=slug).values_list('nazwa', flat=True).order_by('id')
 		ws = []
 		for i in zawody:
 			ws.append(wb.add_sheet(i))
@@ -286,7 +286,7 @@ def exportexcel(request, pk):
 
 
 		font_style = xlwt.XFStyle()
-		zawody_id = Konkurencja.objects.filter(turniej__id=pk).values_list('id', flat=True).order_by('id')
+		zawody_id = Konkurencja.objects.filter(turniej__slug=slug).values_list('id', flat=True).order_by('id')
 		zawody_id_lista = []
 		for i in zawody_id:
 			zawody_id_lista.append(i)
@@ -296,7 +296,7 @@ def exportexcel(request, pk):
 		for i in zawody_id_lista:
 			rows.append(Wyniki.objects.filter(konkurencja__id = i, oplata = 1).values_list('zawodnik__nazwisko','zawodnik__imie', 'zawodnik__klub', 'X', 'Xx', 'dziewiec', 'osiem', 'siedem', 'szesc', 'piec', 'cztery', 'trzy', 'dwa', 'jeden', 'wynik', 'kara').order_by('-wynik', '-X', '-Xx', '-dziewiec', '-osiem', '-siedem', '-szesc', '-piec', '-cztery', '-trzy', '-dwa', '-jeden'))
 		# rows.append(Wyniki.objects.filter(zawody__turniej = pk, oplata = 1).values_list('zawodnik__nazwisko','zawodnik__imie', 'zawodnik__klub', 'X', 'Xx', 'dziewiec', 'osiem', 'siedem', 'szesc', 'piec', 'cztery', 'trzy', 'dwa', 'jeden', 'wynik', 'kara').order_by('-wynik', '-X', '-Xx', '-dziewiec', '-osiem', '-siedem', '-szesc', '-piec', '-cztery', '-trzy', '-dwa', '-jeden'))	
-		generalka = Wyniki.objects.raw('select uzytkownicy_uzytkownik.nazwisko, uzytkownicy_uzytkownik.imie, uzytkownicy_uzytkownik.klub, sum(X) as X, sum(Xx) as Xx,sum(dziewiec) as dziewiec, sum(osiem) as osiem,sum(siedem) as siedem , sum(szesc) as szesc, sum(piec) as piec, sum(cztery) as cztery, sum(trzy) as trzy, sum(dwa) as dwa, sum(jeden) as jeden, sum(wynik) as wynik, uzytkownicy_uzytkownik.id from uzytkownicy_uzytkownik inner join zawody_konkurencja on wyniki_wyniki.konkurencja_id = zawody_konkurencja.id inner join wyniki_wyniki on uzytkownicy_uzytkownik.id=wyniki_wyniki.zawodnik_id where zawody_konkurencja.turniej_id = %s and oplata=1 and wyniki_wyniki.kara = %s group by uzytkownicy_uzytkownik.id order by wynik desc, X desc, Xx desc, dziewiec desc, osiem desc, siedem DESC', [pk, 'BRAK'])
+		generalka = Wyniki.objects.raw('select uzytkownicy_uzytkownik.nazwisko, uzytkownicy_uzytkownik.imie, uzytkownicy_uzytkownik.klub, sum(X) as X, sum(Xx) as Xx,sum(dziewiec) as dziewiec, sum(osiem) as osiem,sum(siedem) as siedem , sum(szesc) as szesc, sum(piec) as piec, sum(cztery) as cztery, sum(trzy) as trzy, sum(dwa) as dwa, sum(jeden) as jeden, sum(wynik) as wynik, uzytkownicy_uzytkownik.id from uzytkownicy_uzytkownik inner join zawody_konkurencja on wyniki_wyniki.konkurencja_id = zawody_konkurencja.id inner join wyniki_wyniki on uzytkownicy_uzytkownik.id=wyniki_wyniki.zawodnik_id inner join zawody_turniej on zawody_turniej.id = zawody_konkurencja.turniej_id where zawody_turniej.slug = %s and oplata=1 and wyniki_wyniki.kara = %s group by uzytkownicy_uzytkownik.id order by wynik desc, X desc, Xx desc, dziewiec desc, osiem desc, siedem DESC', [slug, 'BRAK'])
 		# generalka = Wyniki.objects.raw('select wyniki_wyniki.id, zawodnik_id, sum(X) as X, sum(Xx) as Xx,sum(dziewiec) as dziewiec, sum(osiem) as osiem,sum(siedem) as siedem , sum(szesc) as szesc, sum(piec) as piec, sum(cztery) as cztery, sum(trzy) as trzy, sum(dwa) as dwa, sum(jeden) as jeden, sum(wynik) as wynik from wyniki_wyniki inner join zawody_zawody on wyniki_wyniki.zawody_id = zawody_zawody.id where zawody_zawody.turniej_id = %s and oplata=1 and wyniki_wyniki.kara = %s group by zawodnik_id order by wynik desc, X desc, Xx desc, dziewiec desc, osiem desc, siedem DESC', [pk, 'BRAK'])
 		# rows.append(generalka)
 		for x,y in enumerate(ws):

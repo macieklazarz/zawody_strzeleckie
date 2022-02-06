@@ -133,7 +133,7 @@
 		{% if request.user.username == 'admin' %}
 			<div class="d-flex justify-content-center" >
 				<div>
-					<a href="{% url 'wyniki:exportexcel' pk%}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">
+					<a href="{% url 'wyniki:exportexcel' slug%}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">
 						Eksport excel
 					</a>
 				</div>

@@ -27,7 +27,7 @@
 			        	<td class="mu">{{ osoba }}</td>
 			        	<td class="mu">{{ osoba.email }}</td>
 
-						<td><a href="{% url 'wyniki:edytuj_oplate' osoba.id pk%}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Edytuj opłatę</a></td>
+						<td><a href="{% url 'wyniki:edytuj_oplate' osoba.slug slug%}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Edytuj opłatę</a></td>
 
 					</tr>	
 		        	{% endfor %}

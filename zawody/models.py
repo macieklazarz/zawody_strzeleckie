@@ -1,10 +1,17 @@
 from django.db import models
 from uzytkownicy.models import Uzytkownik
+from django.utils.text import slugify
 
 
 class Turniej(models.Model):
-	nazwa = models.CharField(max_length=30)
+	nazwa = models.CharField(max_length=30, unique=True)
 	rejestracja = models.BooleanField(verbose_name='Rejestracja')
+	slug = models.SlugField(unique=True)
+
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.nazwa)
+		super(Turniej, self).save(*args, **kwargs)
 
 	def __str__(self):
 		return self.nazwa
@@ -15,6 +22,11 @@ class Konkurencja(models.Model):
 	nazwa = models.CharField(max_length=30)
 	liczba_strzalow = models.IntegerField(default=10)
 	turniej = models.ForeignKey(Turniej, on_delete=models.CASCADE, null=True)
+	slug = models.SlugField(unique=True)
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.nazwa)
+		super(Konkurencja, self).save(*args, **kwargs)
 
 	def __str__(self):
 		return self.nazwa
@@ -22,10 +34,18 @@ class Konkurencja(models.Model):
 	class Meta:
 		verbose_name_plural = "Konkurencja"
 
+#nazwakonkurencji i turniej powinny być unikalne
+
 
 class Sedzia(models.Model):
 	konkurencja	= models.ForeignKey(Konkurencja, on_delete=models.CASCADE)
 	osoba 		= models.ForeignKey(Uzytkownik, on_delete=models.CASCADE)
+	slug 		= models.SlugField()
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(str(self.konkurencja)+"_"+str(self.osoba))
+		super(Sedzia, self).save(*args, **kwargs)
+
 
 
 	class Meta:

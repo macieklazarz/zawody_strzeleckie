@@ -22,14 +22,14 @@
 	            <td class="m">{{ konkurencja.nazwa }}</td>
 	            <td class="m">{{ konkurencja.turniej }}</td>
 	        	<td class="m">{{ konkurencja.liczba_strzalow }}</td>
-				<td class="m"><a href="{% url 'zawody:usun_konkurencje' konkurencja.pk pk %}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Usuń konkurencję</a></td>
+				<td class="m"><a href="{% url 'zawody:usun_konkurencje' konkurencja.slug slug %}" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Usuń konkurencję</a></td>
 			</tr>	
         	{% endfor %}
       </table>
     </div>
 	<div class="d-flex justify-content-center" >
 		<div>
-			<a href="{% url 'zawody:dodaj_konkurencje' pk=pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Dodaj konkurencję</a>
+			<a href="{% url 'zawody:dodaj_konkurencje' slug %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Dodaj konkurencję</a>
 		</div>
 	</div>
   </div>

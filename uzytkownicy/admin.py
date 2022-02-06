@@ -7,7 +7,7 @@ from uzytkownicy.models import Uzytkownik
 # Register your models here.
 
 class UzytkownikAdmin(UserAdmin):
-	list_display = ('email', 'username','nazwisko', 'imie', 'date_joined', 'last_login', 'is_admin', 'is_rts')
+	list_display = ('email', 'username', 'slug', 'nazwisko', 'imie', 'date_joined', 'last_login', 'is_admin', 'is_rts')
 	search_fields = ('email', 'username', 'nazwisko')
 	readonly_field = ('date_joined', 'last_login')
 

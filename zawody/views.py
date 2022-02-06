@@ -11,7 +11,7 @@ from django.urls import path
 
 
 def nazwa_turnieju(arg):
-	nazwa = Turniej.objects.filter(id=arg).values_list('nazwa')
+	nazwa = Turniej.objects.filter(slug=arg).values_list('nazwa')
 	nazwa_flat = []
 	for i in nazwa:
 		nazwa_flat.append(i)
@@ -26,10 +26,10 @@ class StronaStartowaListView(ListView):
 		return Turniej.objects.all()
 
 
-def home_screen_view(request, pk):
+def home_screen_view(request, slug):
 	context = {}
-	context['pk'] = pk
-	context['nazwa_turnieju'] = nazwa_turnieju(pk)
+	context['slug'] = slug
+	context['nazwa_turnieju'] = nazwa_turnieju(slug)
 	return render(request, "zawody/home.html", context)
 
 class KonkurencjaListView(LoginRequiredMixin, ListView):
@@ -38,8 +38,8 @@ class KonkurencjaListView(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_queryset(self):
@@ -62,12 +62,12 @@ class KonkurencjaCreateView(LoginRequiredMixin, CreateView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_success_url(self):
-		return reverse("zawody:lista_konkurencji", kwargs={'pk':self.kwargs['pk']})
+		return reverse("zawody:lista_konkurencji", kwargs={'slug':self.kwargs['slug']})
 		return super(KonkurencjaCreateView, self).form_valid(form)
 	def dispatch(self, request, *args, **kwargs):
 		try:
@@ -76,7 +76,8 @@ class KonkurencjaCreateView(LoginRequiredMixin, CreateView):
 			else:
 				return redirect('not_authorized')
 		except:
-			return redirect("not_authorized")
+			# return redirect("not_authorized")
+			pass
 
 
 class KonkurencjaDeleteView(LoginRequiredMixin, DeleteView):
@@ -86,15 +87,15 @@ class KonkurencjaDeleteView(LoginRequiredMixin, DeleteView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Konkurencja.objects.all()
 
 	def get_success_url(self):
-		return reverse("zawody:lista_konkurencji", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("zawody:lista_konkurencji", kwargs={'slug': self.kwargs['slug_turniej']})
 
 	def dispatch(self, request, *args, **kwargs):
 		try:
@@ -113,8 +114,8 @@ class TurniejListView(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_queryset(self):
@@ -128,6 +129,7 @@ class TurniejListView(LoginRequiredMixin, ListView):
 				return redirect('not_authorized')
 		except:
 			return redirect('not_authorized')
+			# pass
 
 
 class TurniejCreateView(LoginRequiredMixin, CreateView):
@@ -137,12 +139,12 @@ class TurniejCreateView(LoginRequiredMixin, CreateView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_success_url(self):
-		return reverse("zawody:lista_turniejow", kwargs={'pk':self.kwargs['pk']})
+		return reverse("zawody:lista_turniejow", kwargs={'slug':self.kwargs['slug']})
 		return super(TurniejListView, self).form_valid(form)
 	def dispatch(self, request, *args, **kwargs):
 		try:
@@ -161,15 +163,15 @@ class TurniejDeleteView(LoginRequiredMixin, DeleteView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Turniej.objects.all()
 
 	def get_success_url(self):
-		return reverse("zawody:lista_turniejow", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("zawody:lista_turniejow", kwargs={'slug': self.kwargs['slug_turniej']})
 
 	def dispatch(self, request, *args, **kwargs):
 		try:
@@ -187,15 +189,15 @@ class TurniejEditView(LoginRequiredMixin,UpdateView):
 	form_class = TurniejModelForm
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
 		return context
 
 	def get_queryset(self):
 		return Turniej.objects.all()
 
 	def get_success_url(self):
-		return reverse("zawody:lista_turniejow", kwargs={'pk':self.kwargs['pk_turniej']})
+		return reverse("zawody:lista_turniejow", kwargs={'slug':self.kwargs['slug_turniej']})
 		return super(TurniejEditView, self).form_valid(form)
 
 	def dispatch(self, request, *args, **kwargs):
@@ -206,6 +208,7 @@ class TurniejEditView(LoginRequiredMixin,UpdateView):
 				return redirect('not_authorized')
 		except:
 			return redirect('not_authorized')
+			# pass
 
 
 
@@ -215,8 +218,8 @@ class SedziaListView(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_queryset(self):
@@ -239,12 +242,12 @@ class SedziaCreateView(LoginRequiredMixin, CreateView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk'])
+		context['slug'] = self.kwargs['slug']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug'])
 		return context
 
 	def get_success_url(self):
-		return reverse("zawody:sedzia_lista", kwargs={'pk': self.kwargs['pk']})
+		return reverse("zawody:sedzia_lista", kwargs={'slug': self.kwargs['slug']})
 		return super(SedziaCreateView, self).form_valid(form)
 
 	def dispatch(self, request, *args, **kwargs):
@@ -269,16 +272,16 @@ class SedziaDeleteView(LoginRequiredMixin, DeleteView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['pk'] = self.kwargs['pk_turniej']
-		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['pk_turniej'])
-		# context['rts_lista'] = rts_lista()
+		context['slug'] = self.kwargs['slug_turniej']
+		context['nazwa_turnieju'] = nazwa_turnieju(self.kwargs['slug_turniej'])
+
 		return context
 
 	def get_queryset(self):
 		return Sedzia.objects.all()
 
 	def get_success_url(self):
-		return reverse("zawody:sedzia_lista", kwargs={'pk': self.kwargs['pk_turniej']})
+		return reverse("zawody:sedzia_lista", kwargs={'slug': self.kwargs['slug_turniej']})
 
 	def dispatch(self, request, *args, **kwargs):
 		try:

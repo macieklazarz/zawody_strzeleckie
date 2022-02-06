@@ -25,7 +25,7 @@
 		{% for turniej in object_list %}
 		<div class="col-auto">
 
-			<a href="{% url 'zawody:home' turniej.id %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">{{turniej.nazwa}}</a>
+			<a href="{% url 'zawody:home' turniej.slug %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">{{turniej.nazwa}}</a>
 		</div>
 		{% endfor %}
 	</div>

@@ -37,10 +37,10 @@ class RejestracjaModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         from django.forms.widgets import HiddenInput
         user = kwargs.pop('user', None)
-        pk = kwargs.pop('pk', None)
+        slug = kwargs.pop('slug', None)
         super(RejestracjaModelForm, self).__init__(*args, **kwargs)
         print(f'user admin to {user}')
-        self.fields['konkurencja'].queryset = Konkurencja.objects.filter(turniej__id=pk)
+        self.fields['konkurencja'].queryset = Konkurencja.objects.filter(turniej__slug=slug)
         self.fields['zawodnik'].queryset = Uzytkownik.objects.all().order_by('nazwisko')
         # self.fields['zawodnik'] = forms.ModelChoiceField(queryset=Account.objects.all())
         if not user:

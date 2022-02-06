@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from uzytkownicy.models import Uzytkownik
 from zawody.models import Konkurencja
+from django.utils.text import slugify
 class Wyniki(models.Model):
 
 	KARA_CHOICES = (
@@ -14,6 +15,7 @@ class Wyniki(models.Model):
 
 	konkurencja = models.ForeignKey(Konkurencja, on_delete=models.CASCADE, verbose_name='konkurencja')
 	zawodnik 	= models.ForeignKey(Uzytkownik, on_delete=models.CASCADE)
+	slug 		= models.SlugField()
 	X			=models.IntegerField(blank=True, null=False, default=0)
 	Xx			=models.IntegerField(blank=True, null=False, default=0, verbose_name='10')
 	dziewiec	=models.IntegerField(blank=True, null=False, default=0, verbose_name='9')
@@ -34,6 +36,7 @@ class Wyniki(models.Model):
 		verbose_name_plural = "Wyniki"
 # Create your models here.
 	def save(self, *args, **kwargs):
+		self.slug = slugify(str(self.konkurencja)+"_"+str(self.zawodnik))
 		self.wynik = self.X*10 + self.Xx*10 + self.dziewiec*9 + self.osiem*8 + self.siedem*7 + self.szesc*6+ self.piec*5+ self.cztery*4+ self.trzy*3+ self.dwa*2+ self.jeden*1
 
 		liczba_strzalow = self.X*10 + self.Xx*10 + self.dziewiec+ self.osiem + self.siedem + self.szesc+ self.piec+ self.cztery+ self.trzy+ self.dwa+ self.jeden

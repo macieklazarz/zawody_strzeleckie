@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.text import slugify
 
 
 class MyAccountManager(BaseUserManager):
@@ -35,6 +36,7 @@ class MyAccountManager(BaseUserManager):
 class Uzytkownik(AbstractBaseUser):
 	email 					= models.EmailField(verbose_name="email", max_length=60, unique=True, null=False)
 	username 				= models.CharField(max_length=30, unique=True)
+	slug					= models.SlugField()
 	imie					=models.TextField(max_length=60, null=False)
 	nazwisko				=models.TextField(max_length=60, null=False)	
 	licencja				=models.TextField(max_length=60, verbose_name='Numer licencji', blank=True, null=True)
@@ -63,6 +65,10 @@ class Uzytkownik(AbstractBaseUser):
 
 	def has_module_perms(self, app_label):
 		return True
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.username)
+		super(Uzytkownik, self).save(*args, **kwargs)
 
 
 	class Meta:
